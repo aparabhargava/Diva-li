@@ -94,6 +94,7 @@ input,select{width:100%;font:700 24px "Passion One";padding:10px 12px;border:4px
 .rules li.d{text-decoration:line-through;text-decoration-thickness:3px;opacity:.8}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;gap:10px;align-items:center;background:var(--k);border-top:5px solid var(--o);padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
 .bar .btn{margin:0;padding:10px 8px;font-size:17px;min-height:50px}
+#mute{flex:none;width:54px;padding:0;background:var(--y);color:var(--k)}#mute svg{width:24px;height:24px;display:block;margin:auto}
 #back{flex:1;background:var(--pu)}#next{flex:2;background:var(--g)}
 .dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;background:#555}.dots i.on{background:var(--y)}
 .spark{position:fixed;pointer-events:none;width:10px;height:10px;z-index:20;animation:sp .9s forwards}
@@ -185,7 +186,7 @@ input,select{width:100%;font:700 24px "Passion One";padding:10px 12px;border:4px
 
 </div></section>
 
-<div class="bar"><button class="btn" id="back">Back</button><div class="dots" id="dots"></div><button class="btn" id="next">Next</button></div>
+<div class="bar"><button class="btn" id="mute" aria-label="Mute sounds"></button><button class="btn" id="back">Back</button><div class="dots" id="dots"></div><button class="btn" id="next">Next</button></div>
 
 <script>
 
@@ -201,7 +202,30 @@ document.body.className="b"+cur;$("back").style.visibility=cur?"visible":"hidden
 $("next").style.display=cur===N-1?"none":"block";$("next").textContent=labels[cur];
 window.scrollTo(0,0);if(cur===4)setTimeout(sizeFj,60)}
 function auto(ms){clearTimeout(timer);var at=cur;timer=setTimeout(function(){if(cur===at)go(at+1)},ms)}
-$("next").onclick=function(){go(cur+1)};$("back").onclick=function(){go(cur-1)};go(0);
+var SFX=(function(){var A=null,M=false,master=null;try{M=localStorage.getItem("divali-mute")==="1"}catch(x){}
+function ctx(){if(M)return null;try{if(!A){A=new(window.AudioContext||window.webkitAudioContext)();master=A.createGain();master.gain.value=.9;master.connect(A.destination)}if(A.state==="suspended")A.resume();return A}catch(x){return null}}
+function tone(f,t0,d,o){o=o||{};var a=ctx();if(!a)return;var t=a.currentTime+(t0||0),osc=a.createOscillator(),g=a.createGain();osc.type=o.type||"sine";osc.frequency.setValueAtTime(f,t);
+if(o.to)osc.frequency.exponentialRampToValueAtTime(o.to,t+d);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(o.v||.15,t+(o.a||.01));g.gain.exponentialRampToValueAtTime(.0001,t+d);
+osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+d+.05)}
+function noise(t0,d,o){o=o||{};var a=ctx();if(!a)return;var t=a.currentTime+(t0||0),n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);
+for(var i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,o.decay||2);var s=a.createBufferSource();s.buffer=b;var fl=a.createBiquadFilter();fl.type=o.ft||"highpass";fl.frequency.value=o.f||1500;
+var g=a.createGain();g.gain.value=o.v||.25;s.connect(fl);fl.connect(g);g.connect(master);s.start(t)}
+function honk(t0){[311,392].forEach(function(f){tone(f,t0,.32,{type:"sawtooth",v:.09,a:.02});tone(f*1.01,t0,.32,{type:"square",v:.03,a:.02})})}
+return{
+mute:function(){return M},toggle:function(){M=!M;try{localStorage.setItem("divali-mute",M?"1":"0")}catch(x){}if(!M)this.tap()},
+tap:function(){tone(880,0,.08,{type:"triangle",v:.08})},
+diya:function(n){var f=[523,587,659,784,880][n%5];noise(0,.18,{f:3000,v:.12});tone(f,.03,.5,{type:"sine",v:.18});tone(f*2,.03,.35,{type:"sine",v:.05})},
+cracker:function(){for(var i=0;i<6;i++){var t=i*.18+Math.random()*.08;tone(300+Math.random()*500,t,.25,{type:"sine",to:1600+Math.random()*900,v:.05});noise(t+.22,.35,{f:400+Math.random()*600,v:.45,ft:"lowpass",decay:3});noise(t+.26,.5,{f:4000,v:.08,decay:1.5})}},
+horn:function(){honk(0);honk(.42)},
+yes:function(){tone(659,0,.15,{type:"triangle",v:.14});tone(988,.1,.35,{type:"triangle",v:.14})},
+no:function(){tone(150,0,.45,{type:"sawtooth",v:.1});tone(155,0,.45,{type:"square",v:.05})},
+pop:function(){tone(220,0,.12,{type:"sine",to:900,v:.16})},
+tick:function(on){tone(on?1046:700,0,.1,{type:"triangle",v:.1})},
+fizz:function(){noise(0,.07,{f:5000,v:.06,decay:1})},
+party:function(){[523,659,784,1046].forEach(function(f,i){tone(f,i*.11,.4,{type:"triangle",v:.13})});this.cracker()}}})();
+function muteIcon(){$("mute").innerHTML=SFX.mute()?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m23 9-6 6M17 9l6 6"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>';$("mute").setAttribute("aria-label",SFX.mute()?"Turn sounds on":"Mute sounds")}
+$("mute").onclick=function(){SFX.toggle();muteIcon()};muteIcon();
+$("next").onclick=function(){SFX.tap();go(cur+1)};$("back").onclick=function(){SFX.tap();go(cur-1)};go(0);
 function spark(x,y,n){n=n||16;var c=["#ffd400","#ff2d8f","#0fa34a","#e8132b","#ff7a00","#fff6dc"];for(var i=0;i<n;i++){var s=document.createElement("i");s.className="spark";
 var a=Math.random()*6.28,dd=60+Math.random()*(n>20?200:100);
 s.style.cssText="left:"+x+"px;top:"+y+"px;background:"+c[i%6]+";--x:"+Math.cos(a)*dd+"px;--y:"+Math.sin(a)*dd+"px";document.body.appendChild(s);setTimeout(function(){s.remove()},950)}}
@@ -209,17 +233,14 @@ function burst(){for(var i=0;i<5;i++)setTimeout(function(){spark(innerWidth*(.15
 var cols=["#e8132b","#ff7a00","#ff2d8f","#0fa34a","#7a2cd6"],lit=0;
 cols.forEach(function(c){var b=document.createElement("button");b.className="diya";b.setAttribute("aria-label","Light diya");
 b.innerHTML='<svg viewBox="0 0 80 64"><g class="fl"><path d="M40 2C52 18 51 28 40 30 29 28 28 18 40 2Z" fill="#ffd400" stroke="#120a0a" stroke-width="3"/><path d="M40 14C45 22 44 27 40 28 36 27 35 22 40 14Z" fill="#ff3d3d"/></g><path d="M4 32H76C74 52 60 62 40 62 20 62 6 52 4 32Z" fill="'+c+'" stroke="#120a0a" stroke-width="4"/><path d="M14 42H66" stroke="#ffd400" stroke-width="4" stroke-dasharray="5 5"/></svg>';
-b.onclick=function(e){if(b.classList.contains("lit"))return;b.classList.add("lit");lit++;spark(e.clientX,e.clientY,10);
-if(lit===cols.length){$("lit").innerHTML='<span class="ok">ALL LIT. PARTY ON.</span>';burst();auto(1800)}};$("diyas").appendChild(b)});
-$("horn").onclick=function(e){try{var a=new(window.AudioContext||window.webkitAudioContext)(),g=a.createGain();g.connect(a.destination);
-[311,392].forEach(function(f){var o=a.createOscillator();o.type="sawtooth";o.frequency.value=f;o.connect(g);o.start();o.stop(a.currentTime+.7)});
-g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.7)}catch(x){}
-spark(e.clientX,e.clientY);$("reg").classList.add("on")};
+b.onclick=function(e){if(b.classList.contains("lit"))return;b.classList.add("lit");SFX.diya(lit);lit++;spark(e.clientX,e.clientY,10);
+if(lit===cols.length){$("lit").innerHTML='<span class="ok">ALL LIT. PARTY ON.</span>';burst();setTimeout(function(){SFX.cracker()},350);auto(1800)}};$("diyas").appendChild(b)});
+$("horn").onclick=function(e){SFX.horn();spark(e.clientX,e.clientY);$("reg").classList.add("on")};
 var outfits=[["Saree","ok"],["Lehenga","ok"],["Kurta set","ok"],["Sherwani","ok"],["Anarkali","ok"],["Sharara","ok"],["Nehru jacket","ok"],["Dhoti kurta","ok"],["Indo-western","ok"],["Kurta + jeans","maybe"],["Jeans and tee","no"],["Hoodie","no"]];
 var said={ok:'<span class="ok">APPROVED. LOOKING GOOD.</span>',maybe:'<span class="ok">ALLOWED. THE KURTA IS DOING THE WORK.</span>',no:'<span class="no">DENIED. GO CHANGE.</span>'};
 outfits.forEach(function(o){var c=document.createElement("button");c.className="chip";c.textContent=o[0];c.onclick=function(e){
 [].forEach.call($("chips").children,function(x){x.classList.remove("on")});c.classList.add("on");
-$("stamp").innerHTML=said[o[1]];spark(e.clientX,e.clientY);if(o[1]!=="no")auto(1500);else clearTimeout(timer)};$("chips").appendChild(c)});
+$("stamp").innerHTML=said[o[1]];if(o[1]==="no")SFX.no();else SFX.yes();spark(e.clientX,e.clientY);if(o[1]!=="no")auto(1500);else clearTimeout(timer)};$("chips").appendChild(c)});
 var cv=$("fj"),cx=cv.getContext("2d"),ps=[],run=false;
 function sizeFj(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight}
 function add(x,y){for(var i=0;i<5;i++){var a=Math.random()*6.28,v=1+Math.random()*3.5;ps.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:1,c:["#fff6dc","#ffd400","#ff7a00","#ff2d8f"][i%4]})}if(!run){run=true;requestAnimationFrame(tick)}}
@@ -227,7 +248,7 @@ function tick(){cx.fillStyle="rgba(11,4,24,.28)";cx.fillRect(0,0,cv.width,cv.hei
 ps=ps.filter(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.l-=.025;if(p.l<=0)return false;cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,3,3);return true});cx.globalAlpha=1;
 if(ps.length)requestAnimationFrame(tick);else{run=false;cx.clearRect(0,0,cv.width,cv.height)}}
 function pos(e){var r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
-cv.onpointermove=function(e){var p=pos(e);add(p[0],p[1])};cv.onpointerdown=function(e){var p=pos(e);for(var i=0;i<4;i++)add(p[0],p[1])};
+var lastFz=0;cv.onpointermove=function(e){var p=pos(e);add(p[0],p[1]);var t=Date.now();if(t-lastFz>70){lastFz=t;SFX.fizz()}};cv.onpointerdown=function(e){var p=pos(e);for(var i=0;i<4;i++)add(p[0],p[1]);SFX.fizz()};
 // ===== PASTE YOUR FIREBASE CONFIG HERE (Firebase console > Project settings > Your apps > Config) =====
 var FIREBASE_CONFIG = {
   apiKey: "AIzaSyAGuitt2lYTZai3BKczo_Thn7nl4Sqd3hk",
@@ -263,15 +284,15 @@ if(!HAS){fail(m);return}
 m.textContent="Locking it in...";btn.disabled=true;var ref=db.collection("dishes").doc(slug(d));
 db.runTransaction(function(t){return t.get(ref).then(function(s){if(s.exists)return "dup";t.set(ref,{name:n,dish:d,cat:c,at:firebase.firestore.FieldValue.serverTimestamp()});return "ok"})})
 .then(function(r){btn.disabled=false;if(r==="dup"){m.textContent=d+" was just taken. Pick something else.";return}
-m.textContent="Done. "+d+" is yours.";spark(x,y,24)},function(){btn.disabled=false;fail(m)})};
+m.textContent="Done. "+d+" is yours.";spark(x,y,24);SFX.party()},function(){btn.disabled=false;fail(m)})};
 $("rsvp").onclick=function(){var n=$("rn").value.trim(),g=parseInt($("rg").value,10)||1,m=$("rmsg"),btn=this;if(!n){m.textContent="Add your name.";return}
 if(!HAS){fail(m);return}
 m.textContent="Adding you to the board...";btn.disabled=true;
 db.collection("rsvps").doc(slug(n)).set({name:n,guests:g,at:firebase.firestore.FieldValue.serverTimestamp()})
-.then(function(){btn.disabled=false;burst();m.textContent="You're in, "+n+". See you on 1 November."},function(){btn.disabled=false;fail(m)})};
+.then(function(){btn.disabled=false;burst();SFX.party();m.textContent="You're in, "+n+". See you on 1 November."},function(){btn.disabled=false;fail(m)})};
 document.querySelectorAll(".g").forEach(function(g){g.onclick=function(e){g.classList.add("hit");setTimeout(function(){g.classList.remove("hit")},250);
-if(g.dataset.t)g.querySelector("em").textContent=g.dataset.t;spark(e.clientX,e.clientY)}});
-document.querySelectorAll(".rules li").forEach(function(l){l.onclick=function(){l.classList.toggle("d")}});
+if(g.dataset.t)g.querySelector("em").textContent=g.dataset.t;SFX.pop();spark(e.clientX,e.clientY)}});
+document.querySelectorAll(".rules li").forEach(function(l){l.onclick=function(){SFX.tick(l.classList.toggle("d"))}});
 draw();
 </script>
 
