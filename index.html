@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DIVA-LI | 1 November 2026</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<meta name="theme-color" content="#2b0b52">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Bowlby+One&family=Bungee&family=Chango&family=Passion+One:wght@700;900&family=Rozha+One&family=Yatra+One&display=swap" rel="stylesheet">
+<style>
+:root{--r:#e8132b;--y:#ffd400;--g:#0fa34a;--pu:#2b0b52;--p:#ff2d8f;--o:#ff7a00;--k:#120a0a;--w:#fff6dc}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{overflow-x:hidden}
+body{font-family:"Passion One",Impact,sans-serif;font-weight:700;color:var(--w);padding:0 0 calc(96px + env(safe-area-inset-bottom));min-height:100vh;overflow-x:hidden;touch-action:manipulation}
+body.b0{background:linear-gradient(160deg,var(--r),var(--o)) fixed,var(--r)}
+body.b1{background:var(--g) repeating-conic-gradient(#0b7d38 0 25%,var(--g) 0 50%) 0 0/48px 48px}
+body.b2{background:#8a2be2 radial-gradient(circle,#ff2d8f 5px,transparent 6px) 0 0/34px 34px}
+body.b3{background:var(--p) radial-gradient(circle,#ffd400 5px,transparent 6px) 0 0/34px 34px}
+body.b4{background:var(--o) repeating-linear-gradient(45deg,#6a1bb8 0 18px,var(--o) 18px 36px)}
+body.b5{background:var(--r) radial-gradient(circle,#ffd400 4px,transparent 5px) 0 0/28px 28px}
+.mq{background:var(--k);color:var(--y);overflow:hidden;white-space:nowrap;font:400 18px "Bungee";padding:6px 0;border-bottom:5px solid var(--o)}
+.mq span{display:inline-block;padding-left:100%;animation:mq 30s linear infinite}
+@keyframes mq{to{transform:translateX(-100%)}}
+section{display:none;max-width:700px;margin:34px auto 20px;padding:0 26px}
+section.on{display:block;animation:in .4s}
+@keyframes in{from{transform:translateY(14px) scale(.97);opacity:0}}
+.panel{position:relative;background:radial-gradient(circle at 20% 10%,#4a1790,transparent 45%),radial-gradient(circle at 85% 90%,#6a1bb8,transparent 40%),var(--pu);border:5px solid var(--k);padding:46px 14px 22px;box-shadow:0 0 0 5px var(--y),0 0 0 10px var(--k),0 0 0 15px var(--p),0 0 0 20px var(--k),10px 10px 0 20px rgba(0,0,0,.4)}
+.panel:before{content:"";position:absolute;left:-5px;right:-5px;top:-14px;height:34px;background:radial-gradient(circle at 14px 12px,var(--o) 8px,var(--y) 9px 11px,transparent 12px) 0 0/28px 34px repeat-x,linear-gradient(135deg,var(--g) 25%,transparent 25%) 0 14px/28px 20px repeat-x,linear-gradient(225deg,var(--g) 25%,transparent 25%) 14px 14px/28px 20px repeat-x}
+.sun{position:absolute;left:50%;top:70px;width:520px;max-width:130%;aspect-ratio:1;transform:translate(-50%,-30%);border-radius:50%;background:repeating-conic-gradient(var(--p) 0 10deg,var(--o) 10deg 20deg,var(--g) 20deg 30deg,var(--y) 30deg 40deg);opacity:.5;animation:spin 70s linear infinite;pointer-events:none;-webkit-mask:radial-gradient(circle,transparent 16%,#000 17% 38%,transparent 39% 47%,#000 48% 60%,transparent 61%);mask:radial-gradient(circle,transparent 16%,#000 17% 38%,transparent 39% 47%,#000 48% 60%,transparent 61%)}
+@keyframes spin{to{transform:translate(-50%,-30%) rotate(360deg)}}
+.logo{position:relative;text-align:center;font:400 clamp(54px,18vw,120px)/.95 "Bowlby One";color:var(--y);-webkit-text-stroke:2px var(--k);text-shadow:3px 3px 0 var(--k),6px 6px 0 var(--p),9px 9px 0 var(--k),12px 12px 0 var(--o);letter-spacing:1px;margin:6px 0 22px}
+.logo i{font:400 .82em "Yatra One";font-style:normal;color:var(--w)}
+h2{position:relative;text-align:center;font-size:clamp(40px,11vw,66px);line-height:1;color:var(--y);-webkit-text-stroke:2px var(--k);text-shadow:3px 3px 0 var(--k),6px 6px 0 var(--p),9px 9px 0 var(--k);margin-bottom:18px;font-weight:400}
+#s1 h2,#s3 h2{font-family:"Alfa Slab One"}#s4 h2{font-family:"Chango"}#s5 h2,#s2 h2{font-family:"Rozha One"}
+.tag{display:block;width:max-content;margin:-4px auto 14px;transform:rotate(-4deg);background:var(--g);color:var(--w);border:4px solid var(--k);padding:0 14px;font:400 28px "Yatra One";box-shadow:4px 4px 0 var(--k)}
+.lead{text-align:center;font-size:24px;line-height:1.1;margin:0 4px 12px}
+.photo{border:5px solid var(--k);box-shadow:0 0 0 4px var(--y),6px 6px 0 4px var(--k);margin:16px 4px 22px;background:repeating-linear-gradient(45deg,var(--o) 0 12px,var(--p) 12px 24px);min-height:6px}
+.photo img{display:block;width:100%;max-height:300px;object-fit:cover}
+.plates{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin:16px 0}
+.plate{background:var(--y);color:var(--k);border:5px solid var(--k);outline:3px solid var(--w);outline-offset:-10px;padding:14px 6px;text-align:center;font-size:28px;line-height:1.05;box-shadow:5px 5px 0 var(--k);border-radius:8px}
+.plate small{display:block;font:700 14px "Passion One";letter-spacing:2px}
+.rear{background:var(--k);border:5px solid var(--o);padding:16px 10px;text-align:center;margin:10px 0}
+.rear h3{font:400 clamp(28px,8vw,46px) "Chango";color:var(--y);text-shadow:3px 3px 0 var(--r)}
+.rear p{font-size:20px;letter-spacing:1px}
+.reg{display:none;margin:14px auto 4px;max-width:420px}
+.reg.on{display:block;animation:in .4s}
+.btn{display:inline-block;font:400 22px "Bungee";background:var(--r);color:var(--w);border:5px solid var(--k);padding:12px 20px;cursor:pointer;box-shadow:5px 5px 0 var(--k);text-decoration:none;margin:8px 4px;min-height:52px}
+.btn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--k)}
+.btn.g{background:var(--g)}.btn.y{background:var(--y);color:var(--k)}
+.row{text-align:center;margin-top:12px}
+.sub{font:400 28px "Alfa Slab One";text-align:center;margin:22px 0 10px;color:var(--y)}
+.diyas{display:flex;justify-content:center;flex-wrap:wrap}
+.diya{width:20%;min-width:62px;max-width:100px;cursor:pointer;background:none;border:0;padding:4px}
+.diya svg{width:100%;display:block;transition:filter .3s}
+.fl{opacity:0;transform-origin:40px 30px}
+.lit svg{filter:drop-shadow(0 0 12px #ffb300) drop-shadow(0 -10px 18px #ff7a00)}
+.lit .fl{opacity:1;animation:fl .5s infinite alternate}
+@keyframes fl{to{transform:scale(1.15,.9) rotate(4deg)}}
+.stamp{min-height:54px;text-align:center;font:400 30px/1.05 "Bowlby One";margin-top:14px;transform:rotate(-3deg)}
+.ok{color:#5dff8f}.no{color:#ff7b7b}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip{font:400 16px/1.1 "Bungee";background:var(--w);color:var(--k);border:4px solid var(--k);padding:12px 6px;cursor:pointer;box-shadow:3px 3px 0 var(--k);min-height:52px}
+.chip.on{background:var(--y)}
+label{display:block;font:400 21px "Alfa Slab One";margin:12px 0 4px;color:var(--y)}
+input,select{width:100%;font:700 24px "Passion One";padding:10px 12px;border:4px solid var(--k);background:#fff;color:var(--k);border-radius:0;min-height:52px}
+#msg,#rmsg{font-size:24px;text-align:center;margin-top:10px;min-height:30px}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.chit{background:var(--y);color:var(--k);border:4px solid var(--k);padding:8px 10px;box-shadow:4px 4px 0 var(--k);font-size:20px;transform:rotate(var(--t,0deg))}
+.chit b{display:block;font:400 20px "Bowlby One";line-height:1.1;word-break:break-word}
+.chit:nth-child(3n){background:var(--p);color:var(--w)}.chit:nth-child(3n+1){background:#7dffa8}
+#fj{display:block;width:100%;height:190px;background:#0b0418;border:5px solid var(--k);box-shadow:0 0 0 4px var(--o);touch-action:none}
+.games{display:grid;grid-template-columns:1fr;gap:20px;margin-top:24px}
+.g{cursor:pointer;border:5px solid var(--k);padding:22px 10px;text-align:center;box-shadow:0 0 0 4px var(--w),6px 6px 0 4px var(--k);color:var(--w);transition:transform .25s}
+.g.hit{transform:rotate(-3deg) scale(1.04)}
+.g h3{font:400 clamp(26px,8vw,36px)/1 "Bungee";text-shadow:3px 3px 0 var(--k)}
+.g em{display:block;font:700 22px "Passion One";font-style:normal;color:var(--y);margin-top:8px;min-height:26px}
+.g:nth-child(1){background:var(--r) repeating-conic-gradient(rgba(0,0,0,.18) 0 25%,transparent 0 50%) 0 0/36px 36px}
+.g:nth-child(2){background:var(--g) repeating-linear-gradient(90deg,rgba(0,0,0,.2) 0 10px,transparent 10px 20px)}
+.g:nth-child(3){background:var(--p) radial-gradient(circle,rgba(255,255,255,.3) 6px,transparent 7px) 0 0/28px 28px}
+.g:nth-child(4){background:#7a2cd6 repeating-linear-gradient(45deg,rgba(255,255,255,.15) 0 12px,transparent 12px 24px)}
+.rules{list-style:none;padding:0}
+.chit.pend{opacity:.75;outline:3px dashed var(--w);outline-offset:-8px}
+.chit small{display:block;font:700 15px "Passion One";letter-spacing:1px;opacity:.85}
+.chit{position:relative;min-width:0}
+.chit .x{position:absolute;top:-10px;right:-10px;width:30px;height:30px;border-radius:50%;border:3px solid var(--k);background:var(--r);color:var(--w);font:400 16px/1 "Bungee";cursor:pointer;padding:0}
+.tally{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+.tally span{background:var(--k);color:var(--y);border:4px solid var(--o);padding:6px 12px;font:400 18px "Bungee"}
+.empty{grid-column:1/-1;text-align:center;font-size:21px;opacity:.85;padding:10px;border:3px dashed var(--w)}
+.wa{display:block;width:max-content;max-width:100%;margin:8px auto 0}
+.note{text-align:center;font-size:18px;opacity:.85;margin-top:4px}
+.rules li{display:flex;gap:12px;align-items:center;background:var(--w);color:var(--k);border:4px solid var(--k);padding:12px;margin:14px 0;box-shadow:5px 5px 0 var(--o);cursor:pointer;font-size:24px;line-height:1.05}
+.rules li:before{content:"";flex:none;width:32px;height:32px;border:4px solid var(--k);background:#fff;border-radius:50%}
+.rules li.d:before{background:var(--g)}
+.rules li.d{text-decoration:line-through;text-decoration-thickness:3px;opacity:.8}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;gap:10px;align-items:center;background:var(--k);border-top:5px solid var(--o);padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+.bar .btn{margin:0;padding:10px 8px;font-size:17px;min-height:50px}
+#back{flex:1;background:var(--pu)}#next{flex:2;background:var(--g)}
+.dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;background:#555}.dots i.on{background:var(--y)}
+.spark{position:fixed;pointer-events:none;width:10px;height:10px;z-index:20;animation:sp .9s forwards}
+@keyframes sp{to{transform:translate(var(--x),var(--y)) rotate(200deg) scale(0);opacity:0}}
+@media(prefers-reduced-motion:reduce){.mq span,.sun,.fl{animation:none!important}}
+@media(min-width:620px){.games{grid-template-columns:1fr 1fr}.chips{grid-template-columns:repeat(3,1fr)}.board{grid-template-columns:repeat(3,1fr)}.panel{padding:46px 24px 24px}}
+</style>
+</head>
+<body class="b0">
+
+<div class="mq"><span id="mq"></span></div>
+
+<section id="s0" class="on"><div class="panel">
+<div class="sun"></div>
+<h1 class="logo">DIVA-<i>ली</i></h1>
+<div class="photo"></div>
+<div class="plates">
+<div class="plate">1 NOV 2026<small>SUNDAY</small></div>
+<div class="plate">9 PM ONWARDS<small>COME HUNGRY</small></div>
+</div>
+<div class="sub">Light the diyas</div>
+<div class="diyas" id="diyas"></div>
+<div class="stamp" id="lit"></div>
+</div></section>
+
+<section id="s1"><div class="panel">
+<h2>Find the party</h2><span class="tag">रास्ता</span>
+<div class="photo"></div>
+<div class="rear">
+<h3>HORN OK PLEASE</h3>
+<p>Press the horn to get the address.</p>
+<div class="row"><button class="btn" id="horn">Honk</button></div>
+<div class="reg" id="reg">
+<div class="plate">17-P KESHAV BAUG<small>GREENWOOD SOCIETY, VAISHNODEVI CIRCLE</small></div>
+<a class="btn y" href="https://share.google/5Ua4ovUK4BgdOgX8n" target="_blank" rel="noopener">Get directions</a>
+</div>
+</div>
+</div></section>
+
+<section id="s2"><div class="panel">
+<h2>Dress code</h2><span class="tag">पोशाक</span>
+<p class="lead">Traditional only. Pick your look.</p>
+<div class="chips" id="chips"></div>
+<div class="stamp" id="stamp"></div>
+</div></section>
+
+<section id="s3"><div class="panel">
+<h2>Claim your dish</h2><span class="tag">थाली</span>
+<p class="lead">It's a potluck. Everyone brings something to eat, so claim your dish here and we won't end up with five plates of the same thing.</p>
+<div class="photo"></div>
+<label for="nm">Your name</label><input id="nm" maxlength="24" autocomplete="given-name">
+<label for="ds">Your dish</label><input id="ds" maxlength="40">
+<label for="ty">Type</label><select id="ty"><option>Snacks</option><option>Sweets</option><option>Main course</option><option>Drinks</option><option>Sides</option></select>
+<div class="row"><button class="btn" id="book">Lock it in</button></div>
+<p id="msg"></p>
+<div class="sub">Already claimed</div>
+<div class="board" id="board"></div>
+</div></section>
+
+<section id="s4"><div class="panel">
+<h2>Game list</h2><span class="tag">खेल</span>
+<canvas id="fj"></canvas>
+<p class="lead" style="margin-top:10px">Drag across the dark to light a fuljhadi.</p>
+<div class="games">
+<div class="g"><h3>Passing the Parcel</h3><em>with a twist</em></div>
+<div class="g"><h3>Mafia</h3><em></em></div>
+<div class="g"><h3>Yes or No</h3><em></em></div>
+<div class="g" data-t="Chips only. No real money."><h3>Teen Patti + Poker</h3><em></em></div>
+</div>
+</div></section>
+
+<section id="s5"><div class="panel">
+<h2>House rules</h2><span class="tag">नियम</span>
+<ul class="rules">
+<li>Clean up after yourself. Plates, cups, wrappers, all of it.</li>
+<li>Drinks and everything else that comes with them get split equally between all of us.</li>
+<li>Bring the dish you claimed.</li>
+<li>Do not drive home after drinking.</li>
+<li>Have fun and do not create trouble.</li>
+</ul>
+<div class="sub">Are you coming?</div>
+<label for="rn">Your name</label><input id="rn" maxlength="24" autocomplete="given-name">
+<label for="rg">How many people (including you)</label><select id="rg"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+<div class="row"><button class="btn" id="rsvp">I'm in</button></div>
+<p id="rmsg"></p>
+<div class="sub">Guest board</div>
+<div class="tally" id="tally"></div>
+<div class="board" id="guests"></div>
+
+</div></section>
+
+<div class="bar"><button class="btn" id="back">Back</button><div class="dots" id="dots"></div><button class="btn" id="next">Next</button></div>
+
+<script>
+
+var $=function(i){return document.getElementById(i)},esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var strip="HORN OK PLEASE   *   HAPPY DIWALI   *   OK TATA   *   ARRIVE AT YOUR OWN RISK   *   शुभ दीपावली   *   LIGHT THE DIYAS FIRST   *   ";
+$("mq").textContent=strip+strip+strip;
+var secs=document.querySelectorAll("section"),N=secs.length,cur=0,labels=["Next: find the party","Next: dress code","Next: your dish","Next: games","Next: house rules",""],timer;
+for(var d=0;d<N;d++)$("dots").appendChild(document.createElement("i"));
+function go(i){clearTimeout(timer);cur=Math.max(0,Math.min(N-1,i));
+secs.forEach(function(s,k){s.classList.toggle("on",k===cur)});
+[].forEach.call($("dots").children,function(x,k){x.classList.toggle("on",k===cur)});
+document.body.className="b"+cur;$("back").style.visibility=cur?"visible":"hidden";
+$("next").style.display=cur===N-1?"none":"block";$("next").textContent=labels[cur];
+window.scrollTo(0,0);if(cur===4)setTimeout(sizeFj,60)}
+function auto(ms){clearTimeout(timer);var at=cur;timer=setTimeout(function(){if(cur===at)go(at+1)},ms)}
+$("next").onclick=function(){go(cur+1)};$("back").onclick=function(){go(cur-1)};go(0);
+function spark(x,y,n){n=n||16;var c=["#ffd400","#ff2d8f","#0fa34a","#e8132b","#ff7a00","#fff6dc"];for(var i=0;i<n;i++){var s=document.createElement("i");s.className="spark";
+var a=Math.random()*6.28,dd=60+Math.random()*(n>20?200:100);
+s.style.cssText="left:"+x+"px;top:"+y+"px;background:"+c[i%6]+";--x:"+Math.cos(a)*dd+"px;--y:"+Math.sin(a)*dd+"px";document.body.appendChild(s);setTimeout(function(){s.remove()},950)}}
+function burst(){for(var i=0;i<5;i++)setTimeout(function(){spark(innerWidth*(.15+Math.random()*.7),innerHeight*(.15+Math.random()*.5),30)},i*200)}
+var cols=["#e8132b","#ff7a00","#ff2d8f","#0fa34a","#7a2cd6"],lit=0;
+cols.forEach(function(c){var b=document.createElement("button");b.className="diya";b.setAttribute("aria-label","Light diya");
+b.innerHTML='<svg viewBox="0 0 80 64"><g class="fl"><path d="M40 2C52 18 51 28 40 30 29 28 28 18 40 2Z" fill="#ffd400" stroke="#120a0a" stroke-width="3"/><path d="M40 14C45 22 44 27 40 28 36 27 35 22 40 14Z" fill="#ff3d3d"/></g><path d="M4 32H76C74 52 60 62 40 62 20 62 6 52 4 32Z" fill="'+c+'" stroke="#120a0a" stroke-width="4"/><path d="M14 42H66" stroke="#ffd400" stroke-width="4" stroke-dasharray="5 5"/></svg>';
+b.onclick=function(e){if(b.classList.contains("lit"))return;b.classList.add("lit");lit++;spark(e.clientX,e.clientY,10);
+if(lit===cols.length){$("lit").innerHTML='<span class="ok">ALL LIT. PARTY ON.</span>';burst();auto(1800)}};$("diyas").appendChild(b)});
+$("horn").onclick=function(e){try{var a=new(window.AudioContext||window.webkitAudioContext)(),g=a.createGain();g.connect(a.destination);
+[311,392].forEach(function(f){var o=a.createOscillator();o.type="sawtooth";o.frequency.value=f;o.connect(g);o.start();o.stop(a.currentTime+.7)});
+g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.7)}catch(x){}
+spark(e.clientX,e.clientY);$("reg").classList.add("on")};
+var outfits=[["Saree","ok"],["Lehenga","ok"],["Kurta set","ok"],["Sherwani","ok"],["Anarkali","ok"],["Sharara","ok"],["Nehru jacket","ok"],["Dhoti kurta","ok"],["Indo-western","ok"],["Kurta + jeans","maybe"],["Jeans and tee","no"],["Hoodie","no"]];
+var said={ok:'<span class="ok">APPROVED. LOOKING GOOD.</span>',maybe:'<span class="ok">ALLOWED. THE KURTA IS DOING THE WORK.</span>',no:'<span class="no">DENIED. GO CHANGE.</span>'};
+outfits.forEach(function(o){var c=document.createElement("button");c.className="chip";c.textContent=o[0];c.onclick=function(e){
+[].forEach.call($("chips").children,function(x){x.classList.remove("on")});c.classList.add("on");
+$("stamp").innerHTML=said[o[1]];spark(e.clientX,e.clientY);if(o[1]!=="no")auto(1500);else clearTimeout(timer)};$("chips").appendChild(c)});
+var cv=$("fj"),cx=cv.getContext("2d"),ps=[],run=false;
+function sizeFj(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight}
+function add(x,y){for(var i=0;i<5;i++){var a=Math.random()*6.28,v=1+Math.random()*3.5;ps.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:1,c:["#fff6dc","#ffd400","#ff7a00","#ff2d8f"][i%4]})}if(!run){run=true;requestAnimationFrame(tick)}}
+function tick(){cx.fillStyle="rgba(11,4,24,.28)";cx.fillRect(0,0,cv.width,cv.height);
+ps=ps.filter(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.l-=.025;if(p.l<=0)return false;cx.globalAlpha=p.l;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,3,3);return true});cx.globalAlpha=1;
+if(ps.length)requestAnimationFrame(tick);else{run=false;cx.clearRect(0,0,cv.width,cv.height)}}
+function pos(e){var r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
+cv.onpointermove=function(e){var p=pos(e);add(p[0],p[1])};cv.onpointerdown=function(e){var p=pos(e);for(var i=0;i<4;i++)add(p[0],p[1])};
+// ===== PASTE YOUR FIREBASE CONFIG HERE (Firebase console > Project settings > Your apps > Config) =====
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAGuitt2lYTZai3BKczo_Thn7nl4Sqd3hk",
+  authDomain: "diva-li.firebaseapp.com",
+  projectId: "diva-li",
+  storageBucket: "diva-li.firebasestorage.app",
+  messagingSenderId: "538723576992",
+  appId: "1:538723576992:web:9619ca1a108479ea8a2dc5"
+};
+// =====================================================================================================
+var ST={dishes:[],rsvps:[]},db=null,loaded=false,got={dishes:0,rsvps:0};
+try{if(window.firebase&&FIREBASE_CONFIG.apiKey.indexOf("PASTE")<0){firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore()}}catch(x){db=null}
+var HAS=!!db;
+function k(v){return String(v||"").trim().toLowerCase()}
+function slug(v){return k(v).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60)||"x"}
+function ms(t){return t&&t.toMillis?t.toMillis():Date.now()}
+function draw(){var wait=!HAS?"Board not connected yet.":(loaded?"":"Loading the board...");
+$("board").innerHTML=ST.dishes.length?ST.dishes.map(function(d,i){return '<div class="chit" style="--t:'+((i%3)-1)*1.5+'deg"><b>'+esc(d.dish)+'</b>'+esc(d.name)+'</div>'}).join(""):'<div class="empty">'+(wait||"Nothing claimed yet. Be the first.")+'</div>';
+var map={},order=[];function get(n){var kk=k(n);if(!map[kk]){map[kk]={name:String(n).trim(),guests:0,dishes:[]};order.push(kk)}return map[kk]}
+ST.rsvps.forEach(function(r){get(r.name).guests=+r.guests||1});ST.dishes.forEach(function(d){get(d.name).dishes.push(d)});
+var gs=order.map(function(x){return map[x]});
+$("guests").innerHTML=gs.length?gs.map(function(g,i){return '<div class="chit" style="--t:'+((i%3)-1)*1.5+'deg"><b>'+esc(g.name)+'</b><small>'+(g.guests?(g.guests>1?"Coming, party of "+g.guests:"Coming"):"Hasn't RSVP'd yet")+'</small><small>'+(g.dishes.length?"Bringing: "+g.dishes.map(function(d){return esc(d.dish)+" ("+esc(d.cat)+")"}).join(", "):"No dish claimed yet")+'</small></div>'}).join(""):'<div class="empty">'+(wait||"No one on the board yet. RSVP above to be the first.")+'</div>';
+var n=ST.rsvps.reduce(function(a,r){return a+(+r.guests||1)},0);
+$("tally").innerHTML='<span>'+n+(n===1?' person':' people')+' coming</span><span>'+ST.dishes.length+(ST.dishes.length===1?' dish':' dishes')+' claimed</span>'}
+function listen(name){db.collection(name).onSnapshot(function(s){ST[name]=s.docs.map(function(x){return x.data()}).sort(function(a,b){return ms(a.at)-ms(b.at)});got[name]=1;loaded=got.dishes&&got.rsvps;draw()},function(){got[name]=1;loaded=true;draw()})}
+if(HAS){listen("dishes");listen("rsvps")}
+function fail(el){el.textContent=HAS?"Couldn't save that. Check your connection and try again.":"This invite isn't connected to its database yet."}
+function load(){}
+$("book").onclick=function(e){var n=$("nm").value.trim(),d=$("ds").value.trim(),c=$("ty").value,m=$("msg"),x=e.clientX,y=e.clientY,btn=this;
+if(!n||!d){m.textContent="Add your name and a dish.";return}
+if(ST.dishes.some(function(r){return k(r.dish)===k(d)})){m.textContent=d+" is already taken. Pick something else.";return}
+if(!HAS){fail(m);return}
+m.textContent="Locking it in...";btn.disabled=true;var ref=db.collection("dishes").doc(slug(d));
+db.runTransaction(function(t){return t.get(ref).then(function(s){if(s.exists)return "dup";t.set(ref,{name:n,dish:d,cat:c,at:firebase.firestore.FieldValue.serverTimestamp()});return "ok"})})
+.then(function(r){btn.disabled=false;if(r==="dup"){m.textContent=d+" was just taken. Pick something else.";return}
+m.textContent="Done. "+d+" is yours.";spark(x,y,24)},function(){btn.disabled=false;fail(m)})};
+$("rsvp").onclick=function(){var n=$("rn").value.trim(),g=parseInt($("rg").value,10)||1,m=$("rmsg"),btn=this;if(!n){m.textContent="Add your name.";return}
+if(!HAS){fail(m);return}
+m.textContent="Adding you to the board...";btn.disabled=true;
+db.collection("rsvps").doc(slug(n)).set({name:n,guests:g,at:firebase.firestore.FieldValue.serverTimestamp()})
+.then(function(){btn.disabled=false;burst();m.textContent="You're in, "+n+". See you on 1 November."},function(){btn.disabled=false;fail(m)})};
+document.querySelectorAll(".g").forEach(function(g){g.onclick=function(e){g.classList.add("hit");setTimeout(function(){g.classList.remove("hit")},250);
+if(g.dataset.t)g.querySelector("em").textContent=g.dataset.t;spark(e.clientX,e.clientY)}});
+document.querySelectorAll(".rules li").forEach(function(l){l.onclick=function(){l.classList.toggle("d")}});
+draw();
+</script>
+
+</body>
+</html>
