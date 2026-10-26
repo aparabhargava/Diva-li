@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DIVA-LI | 1 November 2026</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -99,6 +100,9 @@ input,select{width:100%;font:700 24px "Passion One";padding:10px 12px;border:4px
 .dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;background:#555}.dots i.on{background:var(--y)}
 .spark{position:fixed;pointer-events:none;width:10px;height:10px;z-index:20;animation:sp .9s forwards}
 @keyframes sp{to{transform:translate(var(--x),var(--y)) rotate(200deg) scale(0);opacity:0}}
+section.on{display:flex;flex-direction:column;min-height:calc(100svh - 41px - 96px - 40px - env(safe-area-inset-bottom))}
+section.on .panel{flex:1;display:flex;flex-direction:column;justify-content:center}
+@media(max-width:560px){section{margin:20px auto 12px;padding:0 14px}section.on{min-height:calc(100svh - 41px - 96px - 32px - env(safe-area-inset-bottom))}.panel{padding:40px 12px 18px;box-shadow:0 0 0 4px var(--y),0 0 0 7px var(--k),0 0 0 10px var(--p),0 0 0 13px var(--k),6px 6px 0 13px rgba(0,0,0,.4)}.panel:before{left:-5px;right:-5px}}
 @media(prefers-reduced-motion:reduce){.mq span,.sun,.fl{animation:none!important}}
 @media(min-width:620px){.games{grid-template-columns:1fr 1fr}.chips{grid-template-columns:repeat(3,1fr)}.board{grid-template-columns:repeat(3,1fr)}.panel{padding:46px 24px 24px}}
 </style>
@@ -210,13 +214,21 @@ osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+d+.05)}
 function noise(t0,d,o){o=o||{};var a=ctx();if(!a)return;var t=a.currentTime+(t0||0),n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);
 for(var i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,o.decay||2);var s=a.createBufferSource();s.buffer=b;var fl=a.createBiquadFilter();fl.type=o.ft||"highpass";fl.frequency.value=o.f||1500;
 var g=a.createGain();g.gain.value=o.v||.25;s.connect(fl);fl.connect(g);g.connect(master);s.start(t)}
-function honk(t0){[311,392].forEach(function(f){tone(f,t0,.32,{type:"sawtooth",v:.09,a:.02});tone(f*1.01,t0,.32,{type:"square",v:.03,a:.02})})}
+function blast(t0,d){var a=ctx();if(!a)return;var t=a.currentTime+t0,ws=a.createWaveShaper(),cv=new Float32Array(1024);
+for(var i=0;i<1024;i++){var x=i/511.5-1;cv[i]=Math.tanh(x*3)}ws.curve=cv;
+var bp=a.createBiquadFilter();bp.type="bandpass";bp.frequency.value=1100;bp.Q.value=.6;var lp=a.createBiquadFilter();lp.type="lowpass";lp.frequency.value=3200;
+var g=a.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.22,t+.035);g.gain.setValueAtTime(.22,t+d-.06);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+var lfo=a.createOscillator(),lg=a.createGain();lfo.frequency.value=5.5;lg.gain.value=3;lfo.connect(lg);lfo.start(t);lfo.stop(t+d+.05);
+[[370,.5],[466,.42],[554,.22],[185,.25]].forEach(function(p){var o=a.createOscillator(),og=a.createGain();o.type="sawtooth";
+o.frequency.setValueAtTime(p[0]*.9,t);o.frequency.exponentialRampToValueAtTime(p[0],t+.06);o.frequency.setValueAtTime(p[0],t+d-.08);o.frequency.exponentialRampToValueAtTime(p[0]*.94,t+d);
+lg.connect(o.frequency);og.gain.value=p[1];o.connect(og);og.connect(ws);o.start(t);o.stop(t+d+.05)});
+ws.connect(bp);bp.connect(lp);lp.connect(g);g.connect(master);noise(t0,.05,{f:2500,v:.08,decay:1})}
 return{
 mute:function(){return M},toggle:function(){M=!M;try{localStorage.setItem("divali-mute",M?"1":"0")}catch(x){}if(!M)this.tap()},
 tap:function(){tone(880,0,.08,{type:"triangle",v:.08})},
 diya:function(n){var f=[523,587,659,784,880][n%5];noise(0,.18,{f:3000,v:.12});tone(f,.03,.5,{type:"sine",v:.18});tone(f*2,.03,.35,{type:"sine",v:.05})},
 cracker:function(){for(var i=0;i<6;i++){var t=i*.18+Math.random()*.08;tone(300+Math.random()*500,t,.25,{type:"sine",to:1600+Math.random()*900,v:.05});noise(t+.22,.35,{f:400+Math.random()*600,v:.45,ft:"lowpass",decay:3});noise(t+.26,.5,{f:4000,v:.08,decay:1.5})}},
-horn:function(){honk(0);honk(.42)},
+horn:function(){blast(0,.2);blast(.28,.2);blast(.56,1.1)},
 yes:function(){tone(659,0,.15,{type:"triangle",v:.14});tone(988,.1,.35,{type:"triangle",v:.14})},
 no:function(){tone(150,0,.45,{type:"sawtooth",v:.1});tone(155,0,.45,{type:"square",v:.05})},
 pop:function(){tone(220,0,.12,{type:"sine",to:900,v:.16})},
